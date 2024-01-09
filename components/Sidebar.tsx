@@ -1,4 +1,4 @@
-import SidebarHeader from "./sidebarHeader";
+import SidebarHeader from "./SidebarHeader";
 import NavLink from "./NavLink";
 import MemberProfile from "./MemberProfile";
 
