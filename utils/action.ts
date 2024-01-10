@@ -1,6 +1,6 @@
 "use server";
 
 export async function generateChatResponse(chatMessage: string) {
-  console.log(chatMessage);
+  console.log("chatMessage", chatMessage.split(" "));
   return "awesome";
 }

@@ -8,7 +8,7 @@ export default function Chat() {
   const [text, setText] = useState<string>("");
   const [messages, setMessages] = useState<string[]>([]);
 
-  const { mutate } = useMutation({
+  const { mutate, data } = useMutation({
     mutationFn: (message: string) => generateChatResponse(message),
     onError: (error) => {
       console.log(error.message);
@@ -17,7 +17,6 @@ export default function Chat() {
       console.log(data);
     },
   });
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate(text);
@@ -26,7 +25,7 @@ export default function Chat() {
   return (
     <div className="min-h-[calc(100vh-6rem)] grid grid-rows-[1fr,auto]">
       <div>
-        <h2 className="text-5xl">messages</h2>
+        <h2 className="text-5xl">{data}</h2>
       </div>
       <form onSubmit={handleSubmit} className="max-w-4xl pt-12">
         <div className="join w-full">
@@ -41,7 +40,7 @@ export default function Chat() {
             }}
           />
           <button
-            className="btn btn-primary join-item capitalize"
+            className="btn btn-secondary join-item capitalize"
             type="submit"
           >
             ask question

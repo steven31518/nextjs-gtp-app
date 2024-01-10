@@ -1,5 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import { FaBarsStaggered } from "react-icons/fa6";
+
 type props = {
   children: React.ReactNode;
 };
