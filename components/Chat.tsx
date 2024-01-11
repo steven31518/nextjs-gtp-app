@@ -43,7 +43,7 @@ export default function Chat() {
               className={`${bcg} flex py-6 -mx-8 px-8 text-xl leading-loose border-b border-base-300`}
             >
               <span className="mr-4 ">{avatar}</span>
-              <p className="max-w-3xl">{content}</p>
+              <p className="max-w-3xl text-sm">{content}</p>
             </div>
           );
         })}
