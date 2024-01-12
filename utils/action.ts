@@ -23,6 +23,7 @@ export async function generateChatResponse(
       model: "gpt-3.5-turbo",
       temperature: 0,
     });
+    console.log(response.choices[0].message);
     return response.choices[0].message;
   } catch (error) {
     return null;
@@ -43,7 +44,16 @@ Once you have a list, create a one-day tour. Response should be  in the followin
     "country": "${country}",
     "title": "title of the tour",
     "description": "short description of the city and tour",
-    "stops": ["short paragraph on the stop 1 ", "short paragraph on the stop 2","short paragraph on the stop 3"]
+    "stops": [{"name":"short paragraph on the stop 1",
+              "location":{
+              "latitude":"latitude of this position","longitude":"longitude of this position"}
+              }}, 
+              {"name":"short paragraph on the stop 2",
+              "location":{
+               "latitude":"latitude of this position","longitude":"longitude of this position"},
+               {"name":"short paragraph on the stop 3",
+              "location":{
+               "latitude":"latitude of this position","longitude":"longitude of this position"},]
   }
 }
 "stops" property should include only three stops.
@@ -58,6 +68,7 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
       temperature: 0,
     });
     const tourData = JSON.parse(response.choices[0].message.content as string);
+    
     if (!tourData.tour) {
       return null;
     }
