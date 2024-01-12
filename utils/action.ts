@@ -1,6 +1,8 @@
 "use server";
 import OpenAI from "openai";
 import type { ChatCompletionMessage } from "openai/resources/index.mjs";
+import prisma from "./db";
+import type { tour_props } from "@/components/TourInfo";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,32 +33,29 @@ export async function generateChatResponse(
 }
 
 export async function getExistingTour({ city, country }: destination_req) {
-  return null;
+  return prisma.tour.findUnique({
+    where: {
+      city_country: {
+        city,
+        country,
+      },
+    },
+  });
 }
 
 export async function generateTourResponse({ city, country }: destination_req) {
   const query = `Find a exact ${city} in this exact ${country}.
 If ${city} and ${country} exist, create a list of things families can do in this ${city},${country}. 
-Once you have a list, create a one-day tour. Response should be  in the following JSON format: 
+Once you have a list, create a one-day tour. Response should be in the following JSON format: 
 {
   "tour": {
     "city": "${city}",
     "country": "${country}",
     "title": "title of the tour",
     "description": "short description of the city and tour",
-    "stops": [{"name":"short paragraph on the stop 1",
-              "location":{
-              "latitude":"latitude of this position","longitude":"longitude of this position"}
-              }}, 
-              {"name":"short paragraph on the stop 2",
-              "location":{
-               "latitude":"latitude of this position","longitude":"longitude of this position"},
-               {"name":"short paragraph on the stop 3",
-              "location":{
-               "latitude":"latitude of this position","longitude":"longitude of this position"},]
-  }
-}
-"stops" property should include only three stops.
+    "stops":["short paragraph on the stop 1 ", "short paragraph on the stop 2","short paragraph on the stop 3"] 
+            }
+}             
 If you can't find info on exact ${city}, or ${city} does not exist, or it's population is less than 1, or it is not located in the following ${country},   return { "tour": null }, with no additional characters.`;
   try {
     const response = await openai.chat.completions.create({
@@ -68,7 +67,7 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
       temperature: 0,
     });
     const tourData = JSON.parse(response.choices[0].message.content as string);
-    
+
     if (!tourData.tour) {
       return null;
     }
@@ -78,6 +77,22 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
     return null;
   }
 }
-export async function createNewTour({ city, country }: destination_req) {
-  return null;
+export async function createNewTour(tour: tour_props) {
+  console.log("created");
+  return prisma.tour.create({
+    data: tour,
+  });
 }
+
+// [{"name":"stop name",
+//                description":"short paragrah of the stop 1",
+//               "location":{"latitude":"latitude of stop 1","longitude":"longitude of stop 1"}
+//               },
+//               {"name":"stop name",
+//                description":"short paragrah of the stop 2",
+//               "location":{"latitude":"latitude of stop2","longitude":"longitude of stop2"}
+//               },
+//               {"name":"stop name",
+//               description":"short paragrah of the stop 3",
+//              "location":{"latitude":"latitude of this stop 3","longitude":"longitude of stop 3}
+//               }]
