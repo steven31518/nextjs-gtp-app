@@ -2,7 +2,7 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessage } from "openai/resources/index.mjs";
 import prisma from "./db";
-import type { tour_props } from "@/components/ToursList";
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -128,7 +128,18 @@ export async function getTourById(id: string) {
   });
 }
 
-
+export async function generateTourImage({ city, country }: destination_req) {
+  try {
+    const tourImage = await openai.images.generate({
+      prompt: `a panoramic view of the ${city} ${country}`,
+      n: 1,
+      size: "512x512",
+    });
+    return tourImage?.data[0]?.url;
+  } catch (error) {
+    return null;
+  }
+}
 
 // [{"name":"stop name",
 //                description":"short paragrah of the stop 1",
