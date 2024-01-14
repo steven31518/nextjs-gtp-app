@@ -1,4 +1,5 @@
 "use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getExistingTour,
@@ -17,13 +18,12 @@ export default function NewTour() {
     data: tour,
   } = useMutation({
     mutationFn: async (destination: destination_req) => {
-      const existingTour = await getExistingTour(destination);
-      
-      console.log(existingTour);
+      const existingTour = await getExistingTour(destination);//find exist tour
 
       if (existingTour) return existingTour;
 
       const newTour = await generateTourResponse(destination); //generate
+
       if (newTour) {
         await createNewTour(newTour); //create
         queryClient.invalidateQueries({ queryKey: ["tours"] });
@@ -32,7 +32,9 @@ export default function NewTour() {
       toast.error("No matching city found");
       return null;
     },
+  //if you put just one function and logic in server action,this will cause timeout exceed limit of 10s(when deloy in vercel), so I put logic in client side and sperate those function.
   });
+
   function handelSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);

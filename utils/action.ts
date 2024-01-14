@@ -2,7 +2,7 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessage } from "openai/resources/index.mjs";
 import prisma from "./db";
-import type { tour_props } from "@/components/TourInfo";
+import type { tour_props } from "@/components/ToursList";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -30,17 +30,6 @@ export async function generateChatResponse(
   } catch (error) {
     return null;
   }
-}
-
-export async function getExistingTour({ city, country }: destination_req) {
-  return prisma.tour.findUnique({
-    where: {
-      city_country: {
-        city,
-        country,
-      },
-    },
-  });
 }
 
 export async function generateTourResponse({ city, country }: destination_req) {
@@ -77,12 +66,69 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
     return null;
   }
 }
-export async function createNewTour(tour: tour_props) {
-  console.log("created");
+
+export async function getExistingTour({ city, country }: destination_req) {
+  return prisma.tour.findUnique({
+    where: {
+      city_country: {
+        city,
+        country,
+      },
+    },
+  });
+}
+export async function createNewTour(tour: {
+  city: string;
+  country: string;
+  title: string;
+  description: string;
+  stops: string[];
+}) {
   return prisma.tour.create({
     data: tour,
   });
 }
+
+export async function getAllTours(searchTerm?: string) {
+  if (!searchTerm) {
+    const tours = await prisma.tour.findMany({
+      orderBy: {
+        city: "asc",
+      },
+    });
+    return tours;
+  }
+  const tours = prisma.tour.findMany({
+    where: {
+      OR: [
+        {
+          city: {
+            contains: searchTerm,
+          },
+        },
+        {
+          country: {
+            contains: searchTerm,
+          },
+        },
+      ],
+    },
+    orderBy: {
+      city: "asc",
+    },
+  });
+  return tours;
+}
+
+export async function getTourById(id: string) {
+  return prisma.tour.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+
 
 // [{"name":"stop name",
 //                description":"short paragrah of the stop 1",
