@@ -2,25 +2,48 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { generateChatResponse } from "@/utils/action";
+import {
+  generateChatResponse,
+  fetchUserTokenById,
+  subtractTokens,
+} from "@/utils/action";
 import toast from "react-hot-toast";
 import type { ChatCompletionMessage } from "openai/resources/index.mjs";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Chat() {
   const [text, setText] = useState<string>("");
   const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
-
-  const { mutate, data, isPending } = useMutation({
-    mutationFn: (query: ChatCompletionMessage) =>
-      generateChatResponse([...messages, query]),
-
-    onSuccess: (data) => {
-      if (!data) {
+  const { userId } = useAuth();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (query: ChatCompletionMessage) => {
+      const currentToken = await fetchUserTokenById(userId as string); //check token
+      if (currentToken && currentToken < 300) {
+        toast.error("You don't have enough token");
+        return;
+      }
+      const response = await generateChatResponse([...messages, query]);
+      
+      if (!response) {
         toast.error("Error");
         return;
       }
-      setMessages((pre) => [...pre, data]);
+      setMessages((pre) => [...pre, response.message]);
+      const newTokens = await subtractTokens(
+        userId as string,
+        response.tokens as number
+      );
+      toast.success(`You have ${newTokens} tokens left`);
     },
+
+    // mutationFn: (query: ChatCompletionMessage) =>
+    //   generateChatResponse([...messages, query]),
+    // onSuccess: (data) => {
+    //   if (!data) {
+    //     toast.error("Error");
+    //     return;
+    //   }
+    // },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
