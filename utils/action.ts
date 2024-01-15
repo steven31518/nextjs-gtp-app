@@ -2,7 +2,7 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessage } from "openai/resources/index.mjs";
 import prisma from "./db";
-
+import { revalidatePath } from "next/cache";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,9 +24,13 @@ export async function generateChatResponse(
       ],
       model: "gpt-3.5-turbo",
       temperature: 0,
+      max_tokens: 250,
     });
-    console.log(response.choices[0].message);
-    return response.choices[0].message;
+
+    return {
+      message: response.choices[0].message,
+      tokens: response.usage?.total_tokens,
+    };
   } catch (error) {
     return null;
   }
@@ -60,7 +64,7 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
     if (!tourData.tour) {
       return null;
     }
-    return tourData.tour;
+    return { tour: tourData.tour, tokens: response.usage?.total_tokens };
   } catch (error) {
     console.log(error);
     return null;
@@ -141,6 +145,46 @@ export async function generateTourImage({ city, country }: destination_req) {
   }
 }
 
+export async function fetchUserTokenById(clerkId: string) {
+  const result = await prisma.token.findUnique({
+    where: {
+      clerkId,
+    },
+  });
+  return result?.tokens;
+}
+
+export async function generateUserTokenForId(clerkId: string) {
+  const result = await prisma.token.create({
+    data: {
+      clerkId,
+    },
+  });
+  return result?.tokens;
+}
+
+export async function fetchOrGenerateTokens(clerkId: string) {
+  const result = await fetchUserTokenById(clerkId);
+  if (result) {
+    return result;
+  }
+  return await generateUserTokenForId(clerkId);
+}
+
+export async function subtractTokens(clerkId: string, tokens: number) {
+  const result = await prisma.token.update({
+    where: {
+      clerkId,
+    },
+    data: {
+      tokens: {
+        decrement: tokens, //遞減 tokens
+      },
+    },
+  });
+  revalidatePath("/profile");
+  return result?.tokens;
+}
 // [{"name":"stop name",
 //                description":"short paragrah of the stop 1",
 //               "location":{"latitude":"latitude of stop 1","longitude":"longitude of stop 1"}

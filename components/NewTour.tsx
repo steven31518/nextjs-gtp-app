@@ -5,34 +5,49 @@ import {
   getExistingTour,
   generateTourResponse,
   createNewTour,
+  fetchUserTokenById,
+  subtractTokens,
 } from "@/utils/action";
 import type { destination_req } from "@/utils/action";
 import TourInfo from "./TourInfo";
 import toast from "react-hot-toast";
+import { useAuth } from "@clerk/nextjs";
 
 export default function NewTour() {
   const queryClient = useQueryClient();
+  const { userId } = useAuth();
   const {
     mutate,
     isPending,
     data: tour,
   } = useMutation({
     mutationFn: async (destination: destination_req) => {
-      const existingTour = await getExistingTour(destination);//find exist tour
+      const existingTour = await getExistingTour(destination); //find exist tour
 
       if (existingTour) return existingTour;
 
-      const newTour = await generateTourResponse(destination); //generate
-
-      if (newTour) {
-        await createNewTour(newTour); //create
-        queryClient.invalidateQueries({ queryKey: ["tours"] });
-        return newTour;
+      const currentToken = await fetchUserTokenById(userId as string);
+       //check token
+      if (currentToken && currentToken < 300) {
+        toast.error("You don't have enough token");
+        return;
       }
-      toast.error("No matching city found");
-      return null;
+      const newTour = await generateTourResponse(destination); //generate
+      if (!newTour) {
+        toast.error("No matching city found");
+        return null;
+      }
+
+      await createNewTour(newTour.tour); //create
+      queryClient.invalidateQueries({ queryKey: ["tours"] });
+      const newTokens = await subtractTokens(
+        userId as string,
+        newTour.tokens as number
+      );
+      toast.success(`Tour generated! You have ${newTokens} tokens left`);
+      return newTour.tour;
     },
-  //if you put just one function and logic in server action,this will cause timeout exceed limit of 10s(when deloy in vercel), so I put logic in client side and sperate those function.
+    //if you put just one function and logic in server action , this will cause timeout exceed limit of 10s (when deloy in vercel), so I put logic in client side and sperate those function.
   });
 
   function handelSubmit(e: React.FormEvent<HTMLFormElement>) {
