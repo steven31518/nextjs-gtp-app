@@ -27,7 +27,7 @@ export default function NewTour() {
       if (existingTour) return existingTour;
 
       const currentToken = await fetchUserTokenById(userId as string);
-       //check token
+      //check token
       if (currentToken && currentToken < 300) {
         toast.error("You don't have enough token");
         return;
@@ -44,6 +44,7 @@ export default function NewTour() {
         userId as string,
         newTour.tokens as number
       );
+
       toast.success(`Tour generated! You have ${newTokens} tokens left`);
       return newTour.tour;
     },
@@ -79,6 +80,7 @@ export default function NewTour() {
             name="country"
             required
           />
+
           <button className="btn btn-secondary join-item" type="submit">
             generate tour
           </button>

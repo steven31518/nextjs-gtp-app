@@ -3,7 +3,7 @@ import type { tour_props } from "./ToursList";
 import { MdTravelExplore } from "react-icons/md";
 
 export default function TourCard({ tour }: { tour: tour_props }) {
-  const { id, city, country, title, description, image, stops } = tour;
+  const { id, city, country, title, image } = tour;
   return (
     <Link
       href={`/tours/${id}`}

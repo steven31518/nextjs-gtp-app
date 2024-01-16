@@ -24,7 +24,7 @@ export async function generateChatResponse(
       ],
       model: "gpt-3.5-turbo",
       temperature: 0,
-      max_tokens: 250,
+      max_tokens: 1000,
     });
 
     return {
