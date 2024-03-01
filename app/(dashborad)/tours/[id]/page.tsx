@@ -20,7 +20,7 @@ export default async function SingleTourPage({
   const stopsData = JSON.parse(JSON.stringify(tour.stops)) as string[];
   const ImageData = await Promise.all(
     (tour.stops as string[]).map(async (item) => {
-      const { data } = await axios.get(`${url}${item}}`);
+      const { data } = await axios.get(`${url}${item}}&content_filter=high&orientation=portrait`);
       return data?.results[0]?.urls?.raw;
     })
   );
@@ -64,7 +64,7 @@ export default async function SingleTourPage({
                     </div>
                   );
                 })
-              : null}
+              : <span className="loading loading-lg">loading</span>}
           </div>
         </div>
       </div>
