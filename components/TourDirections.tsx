@@ -9,7 +9,7 @@ export default function TourDirections({
 }) {
   return (
     <>
-      <h2 className="collapse-title text-xl font-medium">Directions Guide</h2>
+      <h2 className="collapse-title text-xl font-medium">路線導覽</h2>
       <iframe
         className="aspect-square w-full mb-2"
         width={"350"}

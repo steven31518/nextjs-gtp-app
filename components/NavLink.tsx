@@ -1,9 +1,9 @@
 import Link from "next/link";
 const links = [
-  { href: "/chat", label: "chat" },
-  { href: "/tours", label: "tours" },
-  { href: "/tours/new-tour", label: "new tours" },
-  { href: "/profile", label: "profile" },
+  { href: "/chat", label: "助手諮詢" },
+  { href: "/tours", label: "旅行紀錄" },
+  { href: "/tours/new-tour", label: "新的旅程" },
+  { href: "/profile", label: "個人檔案" },
 ];
 
 export default function NavLink() {

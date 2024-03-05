@@ -64,25 +64,25 @@ export default function NewTour() {
   return (
     <>
       <form onSubmit={handelSubmit} className="max-w-2xl">
-        <h2 className="mb-4">Select your dream destination</h2>
+        <h2 className="mb-4">選擇你夢想中的地點</h2>
         <div className="join w-full">
           <input
             type="text"
             className="input input-bordered join-item w-full"
-            placeholder="city"
+            placeholder="城市"
             name="city"
             required
           />
           <input
             type="text"
             className="input input-bordered join-item w-full"
-            placeholder="country"
+            placeholder="國家"
             name="country"
             required
           />
 
           <button className="btn btn-secondary join-item" type="submit">
-            generate tour
+            推薦行程
           </button>
         </div>
       </form>

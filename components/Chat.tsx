@@ -76,7 +76,7 @@ export default function Chat() {
         <div className="join w-full">
           <input
             type="text"
-            placeholder="Massage GeniusGPT"
+            placeholder="詢問任何問題..."
             className="input input-bordered join-item w-full"
             value={text}
             required
@@ -89,7 +89,7 @@ export default function Chat() {
             type="submit"
             disabled={isPending}
           >
-            {isPending ? "loading..." : " ask question"}
+            {isPending ? "讀取中" : "送出訊息"}
           </button>
         </div>
       </form>

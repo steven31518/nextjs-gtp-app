@@ -13,7 +13,7 @@ export default function ToursPage() {
   });
   return (
     <>
-      <h1 className="mb-4">Your Tours Record</h1>
+      <h1 className="mb-4">您的旅遊紀錄</h1>
       <form className="max-w-lg mb-12">
         <div className="join w-full">
           <input

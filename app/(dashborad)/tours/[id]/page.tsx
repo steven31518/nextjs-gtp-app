@@ -28,7 +28,7 @@ export default async function SingleTourPage({
   return (
     <div>
       <Link href="/tours" className="btn btn-secondary mb-12">
-        back to tours
+        回到旅遊列表
       </Link>
       <TourInfo tour={tour} />
 
@@ -39,14 +39,14 @@ export default async function SingleTourPage({
       />
       <div className="collapse collapse-arrow bg-base-100 ">
         <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">Stops Map</div>
+        <div className="collapse-title text-xl font-medium">景點地圖</div>
         <div className="collapse-content">
           <TourMap stops={stopsData} city={tour.city} country={tour.country} />
         </div>
       </div>
       <div className="collapse collapse-arrow bg-base-100">
         <input type="radio" name="my-accordion-2" />
-        <div className="collapse-title text-xl font-medium">Tour Images</div>
+        <div className="collapse-title text-xl font-medium">旅遊照片</div>
         <div className="collapse-content">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4">
             {ImageData.length > 0
