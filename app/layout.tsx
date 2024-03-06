@@ -5,9 +5,9 @@ import Provider from "./Provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "GPTGenius",
+  title: "GPTOUR - AI旅行助手",
   description:
-    "GPTGenius: Your AI language companion. Powered by OpenAI, it enhances your conversations, content creation, and more!",
+    "AI旅行助手:幫助你規劃旅遊行程，提供旅遊建議，產生Google Map路徑，並且可以透過聊天與GPT-3進行諮詢!",
 };
 
 export default function RootLayout({
